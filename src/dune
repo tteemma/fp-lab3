@@ -1,5 +1,9 @@
+(library
+ (name interpolation)
+ (wrapped false)
+ (modules Interp_sig Parsing Float_util Grid_util Linear Newton Runner))
+
 (executable
  (name main)
- (public_name lab3)
- (modules main interpolation)
- (libraries))
+ (modules Main)
+ (libraries interpolation))

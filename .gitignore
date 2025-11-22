@@ -1,0 +1,53 @@
+# ===== DUNE / OCAML BUILD =====
+_build/
+*.cmi
+*.cmo
+*.cmx
+*.cmxa
+*.a
+*.o
+*.exe
+*.obj
+*.annot
+
+# ===== OPAM / OCAML LOCAL =====
+.opam/
+.opam-switch/
+.opam-switch/
+.opam-switch/config
+*.opam.locked
+
+# ===== VS CODE =====
+.vscode/
+.history/
+
+# ===== MAC OS =====
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ===== LINUX =====
+*~
+*.swp
+*.swo
+.nfs*
+
+# ===== TEST / TEMP FILES =====
+points.txt
+*.tmp
+*.log
+*.cache
+
+# ===== CI / IDE =====
+.idea/
+*.iml
+
+# ===== GIT INTERNAL (на всякий случай) =====
+.git/rebase-apply/
+.git/rebase-merge/
+
+
+dist/
+_build/
+*.install
+*.merlin

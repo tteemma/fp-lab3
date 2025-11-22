@@ -1,0 +1,14 @@
+(test
+ (name test_parsing)
+ (modules test_parsing)
+ (libraries interpolation))
+
+(test
+ (name test_linear)
+ (modules test_linear)
+ (libraries interpolation))
+
+(test
+ (name test_newton)
+ (modules test_newton)
+ (libraries interpolation))
