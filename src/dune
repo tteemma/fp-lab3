@@ -1,5 +1,8 @@
+(library
+ (name interpolation)
+ (modules interpolation))
+
 (executable
  (name main)
- (public_name lab3)
- (modules main interpolation)
- (libraries))
+ (modules main)
+ (libraries interpolation))

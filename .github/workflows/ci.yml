@@ -1,0 +1,43 @@
+name: OCaml CI
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install OCaml and Opam
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: 5.1.0
+          disable-darcs: true
+
+      - name: Install dune
+        run: |
+          eval $(opam env)
+          opam install dune -y
+          eval $(opam env)
+
+      - name: Install dependencies
+        run: |
+          eval $(opam env)
+          opam install . --deps-only -y
+          eval $(opam env)
+
+      - name: Build
+        run: |
+          eval $(opam env)
+          dune build
+
+      - name: Run tests
+        run: |
+          eval $(opam env)
+          dune test

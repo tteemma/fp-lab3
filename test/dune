@@ -1,0 +1,17 @@
+(test
+ (name test_linear)
+ (modules test_linear)
+ (libraries interpolation)
+ (flags (:standard -w -32)))
+
+(test
+ (name test_newton)
+ (modules test_newton)
+ (libraries interpolation)
+ (flags (:standard -w -32)))
+
+(test
+ (name test_parsing)
+ (modules test_parsing)
+ (libraries interpolation)
+ (flags (:standard -w -32)))

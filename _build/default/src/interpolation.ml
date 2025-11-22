@@ -1,5 +1,7 @@
 type point = { x : float; y : float }
 
+(* ---------------- Linear interpolation ---------------- *)
+
 module Linear = struct
   type state = {
     prev : point option;
@@ -43,6 +45,7 @@ module Linear = struct
   let flush _ _ = []
 end
 
+(* ---------------- Newton interpolation ---------------- *)
 
 module Newton = struct
   type state = {
@@ -139,6 +142,7 @@ module Newton = struct
         loop [] x0
 end
 
+(* ---------------- parse_point moved from main.ml ---------------- *)
 
 let parse_point line =
   let open String in
