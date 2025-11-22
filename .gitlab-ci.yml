@@ -1,0 +1,13 @@
+image: ocaml/opam:alpine-3.18-ocaml-5.2
+
+stages:
+  - build
+
+before_script:
+  - opam update
+  - opam install -y dune
+
+build:
+  stage: build
+  script:
+    - dune build

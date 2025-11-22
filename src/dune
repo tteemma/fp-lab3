@@ -1,0 +1,5 @@
+(executable
+ (name main)
+ (public_name lab3)
+ (modules main interpolation)
+ (libraries))
