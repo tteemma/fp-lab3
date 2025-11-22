@@ -1,5 +1,10 @@
+(library
+ (name interpolation)
+ (modules interp_sig linear newton runner parsing)
+)
+
 (executable
  (name main)
- (public_name lab3)
- (modules main interpolation)
- (libraries))
+ (modules main)
+ (libraries interpolation)
+)

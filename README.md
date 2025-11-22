@@ -1,35 +1,87 @@
-# Lab 3 – Streaming interpolation in OCaml
+# Лабораторная работа №3
 
-This project implements a command-line tool `lab3` that performs streaming
-interpolation over a sequence of `(x, y)` points read from standard input.
+## Потоковая интерполяция (OCaml)
 
-Features:
+## Описание
 
-- Piecewise-linear interpolation (`--linear`)
-- Newton interpolation on a sliding window of N points (`--newton N`)
-- Configurable step size for output grid (`--step h`)
-- Streaming behaviour: output is produced as new points are read
+В данной лабораторной работе реализована **потоковая интерполяция
+(streaming interpolation)** точек, поступающих через стандартный ввод.
 
-## Usage
+Поддерживаются два алгоритма:
 
-```sh
-dune build
-_build/default/src/main.exe --linear --step 0.7
+- **Линейная интерполяция (Linear)**
+- **Интерполяция Ньютона на скользящем окне из N точек (Newton)**
+
+Программа обрабатывает точки **в режиме потока**, выводя
+интерполированные значения по мере поступления данных.
+
+---
+
+## Реализованные алгоритмы
+
+### Линейная интерполяция
+
+Для каждой пары соседних точек строится линейная зависимость, по которой
+вычисляются промежуточные значения с заданным шагом.
+
+### Интерполяция Ньютона
+
+Используется метод _разделённых разностей Ньютона_ на **скользящем окне
+из N последних точек**. Для каждой точки сетки выбирается оптимальное
+окно.
+
+## Формат входных данных
+
+На вход подаются точки вида:
+
+    x y
+
+Допустимые разделители: - пробел - запятая `,` - точка с запятой `;` -
+табуляция
+
+Примеры:
+
+    1 2
+    1,2
+    1; 2
+    1   2
+
+---
+
+## Формат вывода
+
+Результаты выводятся в стандартный поток вывода:
+
+    linear: x y
+    newton: x y
+
+Пример:
+
+    linear: 0.7 0.7
+    newton: 1.5 2.25
+
+---
+
+## Тестирование
+
+В проекте реализованы модульные тесты:
+
+- `test_linear.ml` --- тесты линейной интерполяции
+- `test_newton.ml` --- тесты интерполяции Ньютона
+- `test_parsing.ml` --- тесты парсинга входных данных
+
+Запуск тестов:
+
+```bash
+dune test
 ```
 
-Input format: one point per line, for example
+---
 
-```text
-0 0
-1 1
-2 4
-```
+## Автор
 
-Separators can be spaces, tabs, commas or semicolons.
+Студент: **Мироненко Артем Дмитриевич**\
+Репозиторий:\
+https://github.com/tteemma/fp-lab3
 
-The program writes interpolated points to standard output in the form
-
-```text
-linear: 0 0
-newton: 0.5 0.5
-```
+---
