@@ -15,17 +15,18 @@ let lerp (a : point) (b : point) (x : float) : point =
 
 let step ~step ~params:() st p =
   match st.prev with
-  | None -> ({ prev = Some p; next_x = None }, [])
-  | Some a ->
-      if Float_util.eq p.x a.x then
-        ({ prev = Some p; next_x = None }, [])
+  | None -> ({ st with prev = Some p }, [])
+  | Some prev_p ->
+      let lo, hi =
+        if Float_util.lt prev_p.x p.x then (prev_p, p) else (p, prev_p)
+      in
+      if Float_util.eq lo.x hi.x then
+        ({ prev = Some p; next_x = st.next_x }, [])
       else
-        let lo = if a.x < p.x then a else p in
-        let hi = if a.x < p.x then p else a in
         let start_x =
           match st.next_x with
-          | Some nx when nx > lo.x +. Float_util.eps -> nx
-          | _ -> Grid_util.start_grid_x ~step lo.x
+          | Some nx -> nx
+          | None -> Grid_util.start_grid_x ~step lo.x
         in
         let rec gen x acc =
           if x < hi.x -. Float_util.eps then

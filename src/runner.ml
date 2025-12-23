@@ -16,9 +16,9 @@ type packed_algo =
       state : 's;
     } -> packed_algo
 
-let output_points name pts =
+let output_points (name : string) (pts : point list) : unit =
   List.iter
-    (fun (p : point) -> Printf.printf "[%s] %.6f %.6f\n%!" name p.x p.y)
+    (fun p -> Printf.printf "%s %.12g %.12g\n%!" name p.x p.y)
     pts
 
 let process_point (p : point) (algo : packed_algo) : packed_algo =
@@ -51,13 +51,13 @@ let pack ~step (defs : algo_def list) : packed_algo list =
     defs
 
 let run ~step ~(algs : algo_def list) ~(points : point list) =
-  let packed = pack ~step algs in
-  let packed' =
+  let packed0 = pack ~step algs in
+  let packedN =
     List.fold_left
       (fun acc p -> List.map (process_point p) acc)
-      packed
+      packed0
       points
   in
   match List.rev points with
   | [] -> ()
-  | last :: _ -> List.iter (flush_algo ~last_x:last.x) packed'
+  | last :: _ -> List.iter (flush_algo ~last_x:last.x) packedN

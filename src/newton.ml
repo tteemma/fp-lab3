@@ -39,26 +39,52 @@ let pick_window ~(n:int) ~(x:float) (xs:point list) : point list =
   let chosen = take n with_d |> List.map snd in
   List.sort (fun a b -> Float.compare a.x b.x) chosen
 
-let divided_differences (pts : point list) : float array =
-  let m = List.length pts in
-  let xs = Array.of_list (List.map (fun p -> p.x) pts) in
-  let a = Array.of_list (List.map (fun p -> p.y) pts) in
-  for j = 1 to m - 1 do
-    for i = m - 1 downto j do
-      let denom = xs.(i) -. xs.(i - j) in
-      a.(i) <- (a.(i) -. a.(i - 1)) /. denom
-    done
-  done;
-  a
+let drop n xs =
+  let rec go i ys =
+    if i <= 0 then ys
+    else
+      match ys with
+      | [] -> []
+      | _ :: t -> go (i - 1) t
+  in
+  go n xs
 
-let eval_newton (pts : point list) (coeffs : float array) (x : float) : float =
-  let xs = Array.of_list (List.map (fun p -> p.x) pts) in
-  let m = Array.length coeffs in
-  let acc = ref coeffs.(m - 1) in
-  for i = m - 2 downto 0 do
-    acc := coeffs.(i) +. (x -. xs.(i)) *. !acc
-  done;
-  !acc
+let next_level_k (k:int) (xs:float list) (ys:float list) : float list =
+  let rec go xs0 xsk ys0 =
+    match xs0, xsk, ys0 with
+    | x0 :: xs0', xk :: xsk', y0 :: y1 :: ys_tail ->
+        ((y1 -. y0) /. (xk -. x0)) :: go xs0' xsk' (y1 :: ys_tail)
+    | _ -> []
+  in
+  go xs (drop k xs) ys
+
+let newton_coeffs (pts : point list) : float list =
+  let xs = List.map (fun p -> p.x) pts in
+  let ys0 = List.map (fun p -> p.y) pts in
+  let rec go k ys acc =
+    match ys with
+    | [] -> List.rev acc
+    | a :: _ ->
+        let acc' = a :: acc in
+        let ys' = next_level_k (k + 1) xs ys in
+        go (k + 1) ys' acc'
+  in
+  go 0 ys0 []
+
+let eval_newton (pts : point list) (coeffs : float list) (x : float) : float =
+  let xs = List.map (fun p -> p.x) pts in
+  let rev_xs = List.rev xs in
+  let rev_cs = List.rev coeffs in
+  let rec fold xs cs acc =
+    match xs, cs with
+    | x_i :: xs', a_i :: cs' -> fold xs' cs' (a_i +. (x -. x_i) *. acc)
+    | _ -> acc
+  in
+  match rev_cs, rev_xs with
+  | [], _ -> nan
+  | _, [] -> nan
+  | a_last :: rest, _x_last :: xs_tail_rev ->
+      fold xs_tail_rev rest a_last
 
 let gen_points ~step ~n ~(state:state) : point list =
   let pts = state.points in
@@ -81,7 +107,7 @@ let gen_points ~step ~n ~(state:state) : point list =
             if List.length window < 2 then
               loop (x +. step) acc
             else
-              let coeffs = divided_differences window in
+              let coeffs = newton_coeffs window in
               let y = eval_newton window coeffs x in
               loop (x +. step) ({ x; y } :: acc)
         else
@@ -119,9 +145,10 @@ let flush ~step ~params:n st ~last_x =
             if List.length window < 2 then
               loop (x +. step) acc
             else
-              let coeffs = divided_differences window in
+              let coeffs = newton_coeffs window in
               let y = eval_newton window coeffs x in
               loop (x +. step) ({ x; y } :: acc)
-        else List.rev acc
+        else
+          List.rev acc
       in
       loop start_x []
